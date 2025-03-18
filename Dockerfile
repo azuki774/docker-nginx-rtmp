@@ -88,13 +88,9 @@ COPY --from=build-nginx /etc/nginx /etc/nginx
 
 # Add NGINX path, config and static files.
 ENV PATH "${PATH}:/usr/local/nginx/sbin"
-COPY nginx.conf /etc/nginx/nginx.conf.template
-RUN mkdir -p /opt/data && mkdir /www
-COPY static /www/static
 
 EXPOSE 1935
 EXPOSE 80
 
-CMD envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
-  /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
-  nginx
+STOPSIGNAL SIGQUIT
+CMD ["nginx", "-g", "daemon off;"]
